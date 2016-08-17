@@ -140,44 +140,47 @@ public class Gameboard  implements Cloneable{
 	}
 
 	public boolean CheckDiagonal(GameSpace gs) {
-		boolean goleft = true;
-		boolean goright = true;
+		boolean goupleft = true;
+		boolean goupright = true;
+		boolean godownleft = true;
+		boolean godownright = true;
+	
 		int x = 0, y = 0;
 		int countBRTR = 1;
 		int countTRBR = 1;
 		while (x <= 4 && y <= 4) {
 			x++;
 			y++;
-			if (gs.getX() + x < width && gs.getY() - y >= 0 && goright) {
+			if (gs.getX() + x < width && gs.getY() - y >= 0 && godownright) {
 				if (spaces.get(gs.getY() - y).get(  gs.getX() + x ).getColor() == gs
 						.getColor()) {
 					countBRTR++;
 				}else{
-					goright = false;
+					godownright = false;
 				}
 			}
-			if (gs.getX() - x >= 0 && gs.getY() + y < height  && goleft ) {
+			if (gs.getX() - x >= 0 && gs.getY() + y < height  && goupleft ) {
 				if (spaces.get(gs.getY() + y).get( gs.getX() - x).getColor() == gs
 						.getColor()) {
 					countBRTR++;
 				}else{
-					goleft = false;
+					goupleft = false;
 				}
 			}
-			if (gs.getX() + x < width && gs.getY() + y < height && goright ) {
+			if (gs.getX() + x < width && gs.getY() + y < height && goupright ) {
 				if (spaces.get(gs.getY() + y ).get( gs.getX() + x).getColor() == gs
 						.getColor()) {
 					countTRBR++;
 				}else{
-					goright = false;
+					goupright = false;
 				}
 			}
-			if (gs.getX() - x >= 0 && gs.getY() - y >= 0 && goleft) {
+			if (gs.getX() - x >= 0 && gs.getY() - y >= 0 && godownleft) {
 				if (spaces.get(gs.getY() - y).get( gs.getX() - x).getColor() == gs
 						.getColor()) {
 					countTRBR++;
 				}else{
-					goleft = false;
+					godownleft = false;
 				}
 			}
 			if (countTRBR >= 4 || countBRTR >= 4) {

@@ -220,7 +220,7 @@ public class Computer {
 						if (gb.spaces.get(row).get(col).getColor() == player
 								&& gb.spaces.get(row + 1).get(col).getColor() == player
 								&& gb.spaces.get(row + 2).get(col).getColor() == player
-								&& gb.spaces.get(row + 3).get(col).getColor() == 0) {
+								&& gb.spaces.get(row + 3).get(col).getColor() == '-') {
 							threat += triples * v;
 						}
 					}
