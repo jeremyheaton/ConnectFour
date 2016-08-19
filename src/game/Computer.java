@@ -5,7 +5,9 @@ import java.util.Random;
 
 public class Computer {
 	Gameboard gameBoard;
-	int maxDepth = 1;
+	int maxDepth = 3;
+	int bestChoice;
+	int bestValue = Integer.MIN_VALUE;
 
 	public Computer(Gameboard gb) {
 		this.gameBoard = new Gameboard(gb);
@@ -38,35 +40,27 @@ public class Computer {
 		}
 
 		// If not first turn return the value using minimax algorithm
-		return minimax(gameBoard, -1000000, 0, gameBoard.computerColor);
+		return minimax(gameBoard, 0, gameBoard.computerColor, 3);
 	}
 
-	private int minimax(Gameboard gameBoard, int alpha, int depth, char color) {
+	private int minimax(Gameboard gameBoard, int depth, char color, int move) {
 		Gameboard gb = new Gameboard(gameBoard);
 		int value = 0;
-		int bestChoice = 0;
-		int bestValue = alpha;
 		// determine which use the value is for
-		if (gb.computerColor == color) {
-			value = 1;
-		} else {
-			value = -1;
-		}
+
 		if (gb.CheckForWinner(gb.lastSpacePlayed)) {
-			if(gb.winner == gb.computerColor){
-				bestValue = (1000000000 - depth);
-			}else{
-				bestValue = (-1000000000 - depth);
-			}
-			
+			bestValue = (1000000000 - depth);
+			bestChoice = move;
 		}
 
 		// get the bestValue at our maximum recrusion depth
 		else if (depth == maxDepth) {
 			int moveWeight = (threatLevel(gb, color));
 			if (moveWeight != 0) {
-				bestValue = value * (moveWeight - depth);
-			} else {
+				moveWeight = value * (moveWeight - depth);
+			}
+			if (moveWeight >= bestValue) {
+				bestChoice = move;
 				bestValue = moveWeight;
 			}
 		} else {
@@ -75,14 +69,14 @@ public class Computer {
 			for (int c = 0; c < 7; c++) {
 				Gameboard game = new Gameboard(gb);
 				int selectedPlace = game.PlacePiece(c, color);
-
 				// Recursive call the generated game grid and compare the
 				// current value to move value
 				// If move is higher, make it the new current value.
 
 				if (selectedPlace != -1) {
 					char tempColor;
-					// change the user for the child node after a piece is played
+					// change the user for the child node after a piece is
+					// played
 					if (color == 'Y') {
 						tempColor = 'R';
 					} else {
@@ -90,12 +84,12 @@ public class Computer {
 					}
 					// call the function so we can explore to maximum depth
 					if (depth < maxDepth) {
-						int v = minimax(new Gameboard(game), -1000000, depth + 1, tempColor);
-						if (v > bestValue) {
-							bestChoice = c;
-							bestValue = v;
-						}
-						System.out.println(v);
+						int v = minimax(new Gameboard(game), depth + 1,
+								tempColor, c) > minimax(new Gameboard(game),
+								depth + 1, color, c) ? minimax(new Gameboard(
+								game), depth + 1, tempColor, c) : minimax(
+								new Gameboard(game), depth + 1, color, c);
+
 					}
 				}
 			}
@@ -192,18 +186,18 @@ public class Computer {
 			}
 		}
 		// Check 3 in a row with a space on each end
-				for (int row = 0; row < 6; row++) {
-					for (int col = 0; col < 3; col++) {
-						// horizontal
-						if (gb.spaces.get(col).get(row).getColor() == '-'
-								&& gb.spaces.get(col + 1).get(row).getColor() == player
-								&& gb.spaces.get(col + 2).get(row).getColor() == player
-								&& gb.spaces.get(col + 3).get(row).getColor() == player
-								&& gb.spaces.get(col + 4).get(row + 4).getColor() == '-') {
-							threat += 2 * triples * h * 3;
-						}
-					}
+		for (int row = 0; row < 6; row++) {
+			for (int col = 0; col < 3; col++) {
+				// horizontal
+				if (gb.spaces.get(col).get(row).getColor() == '-'
+						&& gb.spaces.get(col + 1).get(row).getColor() == player
+						&& gb.spaces.get(col + 2).get(row).getColor() == player
+						&& gb.spaces.get(col + 3).get(row).getColor() == player
+						&& gb.spaces.get(col + 4).get(row + 4).getColor() == '-') {
+					threat += 2 * triples * h * 3;
 				}
+			}
+		}
 		// vertical 2.
 		for (int row = 0; row < 4; row++) {
 			for (int col = 0; col < 7; col++) {
@@ -215,16 +209,16 @@ public class Computer {
 			}
 		}
 		// Check for vertical 3.
-				for (int row = 0; row < 3; row++) {
-					for (int col = 0; col < 6; col++) {
-						if (gb.spaces.get(row).get(col).getColor() == player
-								&& gb.spaces.get(row + 1).get(col).getColor() == player
-								&& gb.spaces.get(row + 2).get(col).getColor() == player
-								&& gb.spaces.get(row + 3).get(col).getColor() == '-') {
-							threat += triples * v;
-						}
-					}
+		for (int row = 0; row < 3; row++) {
+			for (int col = 0; col < 6; col++) {
+				if (gb.spaces.get(row).get(col).getColor() == player
+						&& gb.spaces.get(row + 1).get(col).getColor() == player
+						&& gb.spaces.get(row + 2).get(col).getColor() == player
+						&& gb.spaces.get(row + 3).get(col).getColor() == '-') {
+					threat += triples * v;
 				}
+			}
+		}
 		// diagonal bottom left top right.
 		for (int row = 0; row < 3; row++) {
 			for (int col = 0; col < 4; col++) {
@@ -298,7 +292,6 @@ public class Computer {
 			}
 		}
 
-		
 		// diagonally spaced 3 bottom left top right.
 		for (int row = 0; row < 3; row++) {
 			for (int col = 0; col < 4; col++) {
@@ -381,6 +374,7 @@ public class Computer {
 				}
 			}
 		}
+
 		return threat;
 	}
 

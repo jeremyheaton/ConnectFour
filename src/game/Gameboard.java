@@ -21,6 +21,7 @@ public class Gameboard  implements Cloneable{
 	    	spaces.add(gamespaces);
 	    }
 	    this.height = copy.height;
+	    this.width = copy.width;
 	    this.playing = copy.playing;
 	    this.winner = copy.winner;
 	    this.playerColor = copy.playerColor;
